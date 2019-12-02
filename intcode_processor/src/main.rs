@@ -22,17 +22,36 @@ fn main() {
     }
 
     // Run the app
-    processor::run_program(&mut stack);
+    let results: (u32, u32) = brute_force_expected_result(stack);
+    println!("Required values are {}, {}", results.0, results.1);
 
     // Build & display the output
-    let mut output_string = String::new();
-    for value in stack {
-        let value_string: String = value.to_string();
-        output_string.push_str(&value_string);
-        output_string.push(',')
+    // let mut output_string = String::new();
+    // for value in stack {
+    //     let value_string: String = value.to_string();
+    //     output_string.push_str(&value_string);
+    //     output_string.push(',')
+    // }
+
+    // output_string.pop();
+    // println!("Modified stack:");
+    // println!("{}", output_string);
+}
+
+fn brute_force_expected_result(stack: Vec<u32>) -> (u32, u32) {
+    for x in 0..99 {
+        for y in 0..99 {
+            let mut memory: Vec<u32> = stack.to_vec();
+            memory[1] = x;
+            memory[2] = y;
+
+            processor::run_program(&mut memory);
+
+            if memory[0] == 19690720 {
+                return (x, y);
+            }
+        }
     }
 
-    output_string.pop();
-    println!("Modified stack:");
-    println!("{}", output_string);
+    panic!("Could not find values producing expected result.");
 }
