@@ -24,6 +24,10 @@ pub fn run_program(stack: &mut Vec<u32>) {
 }
 
 fn add(stack: &mut Vec<u32>, index: usize) {
+    if index + 3 > stack.len() {
+        panic!("Cannot perform add operation - insufficient space in stack.");
+    }
+
     let first_operand_index: usize = (index + 1).try_into().unwrap();
     let first_operand_position: usize = stack[first_operand_index].try_into().unwrap();
 
@@ -40,6 +44,10 @@ fn add(stack: &mut Vec<u32>, index: usize) {
 }
 
 fn multiply(stack: &mut Vec<u32>, index: usize) {
+    if index + 3 > stack.len() {
+        panic!("Cannot perform add operation - insufficient space in stack.");
+    }
+
     let first_operand_index: usize = (index + 1).try_into().unwrap();
     let first_operand_position: usize = stack[first_operand_index].try_into().unwrap();
 

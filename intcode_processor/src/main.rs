@@ -1,13 +1,17 @@
 pub mod processor;
 
-use std::io::stdin;
+use std::io;
+use std::io::prelude::*;
 
 fn main() {
+    let mut stdin = io::stdin();
+    let mut stdout = io::stdout();
+
     println!("Please enter the intcode program:");
 
     // Read in the line
     let mut buffer = String::new();
-    match stdin().read_line(&mut buffer) {
+    match stdin.read_line(&mut buffer) {
         Ok(n) => println!("Read {} bytes.", n),
         Err(error) => println!("Encountered error: {}", error)
     };
@@ -36,6 +40,14 @@ fn main() {
     // output_string.pop();
     // println!("Modified stack:");
     // println!("{}", output_string);
+
+
+    // We want the cursor to stay at the end of the line, so we print without a newline and flush manually.
+    write!(stdout, "Press any key to continue...").unwrap();
+    stdout.flush().unwrap();
+
+    // Read a single byte and discard
+    let _ = stdin.read(&mut [0u8]).unwrap();
 }
 
 fn brute_force_expected_result(stack: Vec<u32>) -> (u32, u32) {
