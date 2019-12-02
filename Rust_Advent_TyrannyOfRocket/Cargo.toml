@@ -1,0 +1,6 @@
+[package]
+name = "rust_advent_tyrannyofrocket"
+version = "0.1.0"
+
+[dependencies]
+libmath = "0.2.1"
