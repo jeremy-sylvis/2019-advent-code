@@ -1,4 +1,5 @@
 use nalgebra::geometry::Point2;
+use std::cmp;
 
 struct LineSegment<'a,'b> {
     point_a: &'a Point2<f32>,
@@ -43,7 +44,7 @@ pub fn get_points_of_intersection(first_path: &Vec<Point2<f32>>, second_path: &V
                     }
                 },
                 None => {
-                    println!("Segment A {}->{}\tSegment B {}->{}\tNo intersection", first_point_a, first_point_b, second_point_a, second_point_b);
+                    //println!("Segment A {}->{}\tSegment B {}->{}\tNo intersection", first_point_a, first_point_b, second_point_a, second_point_b);
                     continue;
                 }
             }
@@ -124,8 +125,27 @@ fn get_point_of_intersection(first_segment: &LineSegment, second_segment: &LineS
     let intersection: Point2<f32> = Point2::new(x, y);
 
     // Ensure the intersection point is actually bounded by the line segments
+    // It has to exist on *both* segments.
+    let first_segment_min_x: f32 = first_segment.point_a.coords.x.min(first_segment.point_b.coords.x);
+    let first_segment_max_x: f32 = first_segment.point_a.coords.x.max(first_segment.point_b.coords.x);
+    let second_segment_min_x: f32 = second_segment.point_a.coords.x.min(second_segment.point_b.coords.x);
+    let second_segment_max_x: f32 = second_segment.point_a.coords.x.max(second_segment.point_b.coords.x);
 
-    return Option::from(intersection);
+    let first_segment_min_y: f32 = first_segment.point_a.coords.y.min(first_segment.point_b.coords.y);
+    let first_segment_max_y: f32 = first_segment.point_a.coords.y.max(first_segment.point_b.coords.y);
+    let second_segment_min_y: f32 = second_segment.point_a.coords.y.min(second_segment.point_b.coords.y);
+    let second_segment_max_y: f32 = second_segment.point_a.coords.y.max(second_segment.point_b.coords.y);
+
+    let does_intersection_exist_on_first_segment: bool = first_segment_min_x <= intersection.coords.x && first_segment_max_x >= intersection.coords.x &&
+        first_segment_min_y <= intersection.coords.y && first_segment_max_y >= intersection.coords.y;
+    let does_intersection_exist_on_second_segment: bool = second_segment_min_x <= intersection.coords.x && second_segment_max_x >= intersection.coords.x &&
+        second_segment_min_y <= intersection.coords.y && second_segment_max_y >= intersection.coords.y;
+
+    if does_intersection_exist_on_first_segment && does_intersection_exist_on_second_segment {
+        return Option::from(intersection);
+    }
+    
+    return None;
 }
 
 #[test]
@@ -250,6 +270,11 @@ pub fn get_point_closest_to_origin_by_taxicab_distance(points: &Vec<Point2<f32>>
     let mut closest_distance: f32 = -1.0;
 
     for point in points {
+        // The origin is not a valid point
+        if point.coords.x == 0.0 && point.coords.y == 0.0 {
+            continue;
+        }
+
         let current_distance = get_taxicab_distance(&point);
 
         if closest_distance < 0.0 || current_distance < closest_distance {

@@ -8,12 +8,12 @@
             "name": "(Windows) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/target/debug/day_3_manhattan_distance-a4d2ff24ef64f4bf.exe",
+            "program": "${workspaceFolder}/target/debug/day_3_manhattan_distance.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": false
+            "externalConsole": true
         }
     ]
 }

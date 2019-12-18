@@ -14,6 +14,33 @@ fn main() {
     // line_calculator::simple_intersect_testcase_1();
     // return;
 
+    let mut stdin = io::stdin();
+    let mut stdout = io::stdout();
+
+    // Translate to a set of points
+    let first_route_points: Vec<Point2<f32>> = get_route_points_from_input();
+    let second_route_points: Vec<Point2<f32>> = get_route_points_from_input();
+
+    let route_intersections: Vec<Point2<f32>> = geometry_math::get_points_of_intersection(&first_route_points, &second_route_points);
+    let closest_point: &Point2<f32>;
+    let result = geometry_math::get_point_closest_to_origin_by_taxicab_distance(&route_intersections);
+    match result {
+        None => panic!("Could not find close point."),
+        Some(value) => closest_point = value
+    };
+
+    let taxicab_distance: f32 = geometry_math::get_taxicab_distance(&closest_point);
+    println!("Taxicab distance: {}", taxicab_distance);
+
+    // We want the cursor to stay at the end of the line, so we print without a newline and flush manually.
+    write!(stdout, "Press any key to continue...").unwrap();
+    stdout.flush().unwrap();
+
+    // Read a single byte and discard
+    let _ = stdin.read(&mut [0u8]).unwrap();
+}
+
+fn get_route_points_from_input() -> Vec<Point2<f32>> {
     let stdin = io::stdin();
     let stdout = io::stdout();
 
@@ -27,12 +54,11 @@ fn main() {
     };
 
     // Translate to a set of directions
-    let directions: Vec<&str> = direction_parser::parse_directions(&buffer);
-
+    let route_directions: Vec<&str> = direction_parser::parse_directions(&buffer);
     // Translate to a set of points
-    let route_points: Vec<Point2<f32>> = point_parser::parse_points(&directions);
+    let route_points: Vec<Point2<f32>> = point_parser::parse_points(&route_directions);
 
-    
+    return route_points;
 }
 
 #[test]
@@ -62,7 +88,7 @@ fn distance_check_testcase_1() {
 }
 
 #[test]
-fn distance_check_tescase_2() {
+fn distance_check_testcase_2() {
     let first_path: &str = "R98,U47,R26,D63,R33,U87,L62,D20,R33,U53,R51";
     let first_directions: Vec<&str> = direction_parser::parse_directions(first_path);
     let first_points: Vec<Point2<f32>> = point_parser::parse_points(&first_directions);
